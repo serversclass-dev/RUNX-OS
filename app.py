@@ -553,8 +553,9 @@ function hideCtx(){document.getElementById('ctxmenu').style.display='none'}
 function openFiles(startPath){
   const {id,body}=makeWindow('files','Files','files',840,560);
   let path=startPath||'/';
+  body.style.cssText='display:flex;flex-direction:column;overflow:hidden;height:100%';
   body.innerHTML=`
-    <div class="toolbar">
+    <div class="toolbar" style="flex-shrink:0">
       <button class="btn ghost" data-up>${ICO('up')} Up</button>
       <input class="field" data-path value="/">
       <button class="btn" data-go>${ICO('refresh')} Go</button>
@@ -563,7 +564,7 @@ function openFiles(startPath){
       <label class="btn ghost" style="position:relative;overflow:hidden">${ICO('download')} Upload
         <input type="file" data-upload style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
     </div>
-    <div class="grid" data-grid></div>`;
+    <div style="flex:1;overflow:auto;min-height:0"><div class="grid" data-grid></div></div>`;
   const inp=body.querySelector('[data-path]'), grid=body.querySelector('[data-grid]');
   async function load(p){
     const j=await (await fetch('/fm/api/list?path='+encodeURIComponent(p))).json();
@@ -577,7 +578,7 @@ function openFiles(startPath){
       d.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();fileCtx(e,en,load,path);};
       grid.appendChild(d);
     });
-    gsap.from(grid.children,{opacity:0,y:8,stagger:.01,duration:.25});
+    gsap.from(grid.children,{opacity:0,duration:.18});
   }
   body.querySelector('[data-go]').onclick=()=>load(inp.value);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')load(inp.value)});
